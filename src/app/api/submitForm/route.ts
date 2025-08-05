@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-// import { NextResponse } from "next/server";
 import connectMongo from "../../../../lib/mongodb";
 import Form from "../../../../models/Form";
 import { redirect } from "next/navigation";
@@ -17,7 +16,7 @@ export async function POST(req: NextRequest) {
     console.log(userData);
     redirect("/success");
 
-    // return redirect("/success");
+    return redirect("/success");
   } catch (error: unknown) {
     if (error instanceof Error) {
       return Response.json(
@@ -37,8 +36,13 @@ export async function GET() {
   try {
     await connectMongo();
     const users = await Form.find({});
-    console.log(users);
-    return Response.json(users, { status: 200 });
+    if (users.length > 1) {
+      Response.json(users);
+    } else {
+      Response.json({
+        message: "No user found in database",
+      });
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       return Response.json(
