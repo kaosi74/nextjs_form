@@ -13,15 +13,11 @@ export default function Page() {
         e.currentTarget.elements.namedItem("password") as HTMLTextAreaElement
       ).value,
     };
-
-    const submitPost = await fetch("/api/submitForm", {
+    await fetch("/api/submitForm", {
       method: "POST",
       body: JSON.stringify(formData),
     });
-    
-    if (submitPost) {
-      console.log("Form Submitted");
-    }
+    e.currentTarget.reset();
   };
 
   return (
