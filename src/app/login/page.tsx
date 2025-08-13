@@ -2,68 +2,51 @@
 
 import { FormEvent, useRef } from "react";
 
-export default function Page() {
+export default function LoginPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = {
-      username: (
-        e.currentTarget.elements.namedItem("username") as HTMLInputElement
-      ).value,
+    const payload = {
       email: (e.currentTarget.elements.namedItem("email") as HTMLInputElement)
         .value,
       password: (
         e.currentTarget.elements.namedItem("password") as HTMLInputElement
       ).value,
     };
+
     try {
-      const res = await fetch("/api/submitForm", {
+      const res = await fetch("/api/loginForm", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
         formRef.current?.reset();
-        window.location.href = "/login";
+        window.location.href = "/dasboard";
       } else {
         const errorData = await res.json();
-        alert(errorData.message || "Submission failed");
+        alert(errorData.message || "Login failed");
       }
     } catch (err) {
-      console.error("Error submitting form:", err);
+      console.error("Error logging in:", err);
       alert("Something went wrong");
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-sky-950 to-indigo-900 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-bl from-indigo-950 to-sky-800 flex items-center justify-center p-4">
       <form
         ref={formRef}
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white bg-opacity-10 backdrop-blur-lg rounded-xl shadow-lg p-6 space-y-6 text-white"
       >
         <div className="text-center space-y-1">
-          <h1 className="text-2xl font-semibold">Sign Up</h1>
+          <h1 className="text-2xl font-semibold">Log In</h1>
           <p className="text-sm text-gray-300">
-            Create your account to get started
+            Welcome back! Sign in to continue
           </p>
-        </div>
-
-        <div>
-          <label htmlFor="username" className="block mb-1 text-sm font-medium">
-            Username
-          </label>
-          <input
-            id="username"
-            name="username"
-            required
-            placeholder="e.g. janedoe"
-            className="w-full px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
         </div>
 
         <div>
@@ -76,7 +59,7 @@ export default function Page() {
             type="email"
             required
             placeholder="you@example.com"
-            className="w-full px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
         </div>
 
@@ -90,21 +73,21 @@ export default function Page() {
             type="password"
             required
             placeholder="••••••••"
-            className="w-full px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full py-2 rounded-md bg-blue-600 hover:bg-blue-700 font-semibold transition"
+          className="w-full py-2 rounded-md bg-purple-600 hover:bg-purple-700 font-semibold transition"
         >
-          Create Account
+          Log In
         </button>
 
         <p className="text-center text-sm text-gray-300">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-400 hover:underline">
-            Log in
+          New here?{" "}
+          <a href="/signup" className="text-purple-400 hover:underline">
+            Create an account
           </a>
         </p>
       </form>

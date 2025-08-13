@@ -5,8 +5,8 @@ import Form from "../../../../models/Form";
 export async function POST(req: Request) {
   try {
     await connectMongo();
-    const { username, email, password } = await req.json();
-    if (!username || !email || !password) {
+    const { email, password } = await req.json();
+    if (!email || !password) {
       return Response.json(
         { message: "All fields are required" },
         { status: 400 }
@@ -16,24 +16,13 @@ export async function POST(req: Request) {
         { message: "Invalid email format" },
         { status: 400 }
       );
-    } else if (password.length < 6) {
-      return Response.json(
-        { message: "Password is not strong" },
-        { status: 400 }
-      );
-    }
+    } 
     const existingUser = await Form.findOne({ email });
-    if (existingUser) {
-      return Response.json({ message: "User already exists" }, { status: 400 });
-    }
-
-    const userData = await Form.create({
-      username,
-      email,
-      password,
-    });
-    console.log(userData);
-    return Response.json({ success: true }, { status: 201 });
+    if (!existingUser) {
+      return Response.json({ message: "User not found" }, { status: 400 });
+      }
+      
+    return Response.json({ success: true }, { status: 200 });
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
