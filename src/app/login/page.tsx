@@ -1,12 +1,14 @@
 "use client";
 
-import { FormEvent, useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
 
 export default function LoginPage() {
   const formRef = useRef<HTMLFormElement>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const payload = {
       email: (e.currentTarget.elements.namedItem("email") as HTMLInputElement)
         .value,
@@ -32,6 +34,8 @@ export default function LoginPage() {
     } catch (err) {
       console.error("Error logging in:", err);
       alert("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,8 +84,9 @@ export default function LoginPage() {
         <button
           type="submit"
           className="w-full py-2 rounded-md bg-purple-600 hover:bg-purple-700 font-semibold transition"
+          disabled={loading}
         >
-          Log In
+          {loading ? "Logging in..." : "Log In"}
         </button>
 
         <p className="text-center text-sm text-gray-300">

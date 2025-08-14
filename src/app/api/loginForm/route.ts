@@ -1,4 +1,5 @@
 // import { NextRequest } from "next/server";
+import bcrypt from "bcryptjs";
 import connectMongo from "../../../../lib/mongodb";
 import Form from "../../../../models/Form";
 
@@ -16,12 +17,16 @@ export async function POST(req: Request) {
         { message: "Invalid email format" },
         { status: 400 }
       );
-    } 
+    }
     const existingUser = await Form.findOne({ email });
     if (!existingUser) {
       return Response.json({ message: "User not found" }, { status: 400 });
-      }
-      
+    }
+    const validPassword = await bcrypt.compare(password, existingUser.password);
+    if (!validPassword) {
+      return Response.json({ message: "Invalid Credentials" });
+    }
+
     return Response.json({ success: true }, { status: 200 });
   } catch (error) {
     const errorMessage =
@@ -34,28 +39,28 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
-  try {
-    await connectMongo();
-    const users = await Form.find({});
-    if (users.length > 0) {
-      return Response.json(users);
-    } else {
-      return Response.json({
-        message: "No user found in database",
-      });
-    }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return Response.json(
-        { message: "Internal Server Error", error: error.message },
-        { status: 500 }
-      );
-    } else {
-      return Response.json(
-        { message: "Internal Server Error", error: "Unknown error occurred" },
-        { status: 500 }
-      );
-    }
-  }
-}
+// export async function GET() {
+//   try {
+//     await connectMongo();
+//     const users = await Form.find({});
+//     if (users.length > 0) {
+//       return Response.json(users);
+//     } else {
+//       return Response.json({
+//         message: "No user found in database",
+//       });
+//     }
+//   } catch (error: unknown) {
+//     if (error instanceof Error) {
+//       return Response.json(
+//         { message: "Internal Server Error", error: error.message },
+//         { status: 500 }
+//       );
+//     } else {
+//       return Response.json(
+//         { message: "Internal Server Error", error: "Unknown error occurred" },
+//         { status: 500 }
+//       );
+//     }
+//   }
+// }

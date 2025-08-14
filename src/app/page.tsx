@@ -1,12 +1,16 @@
 "use client";
 
-import { FormEvent, useRef } from "react";
+import clsx from "clsx";
+import { FormEvent, useRef, useState } from "react";
+import { robo } from "./ui/font";
 
 export default function Page() {
   const formRef = useRef<HTMLFormElement>(null);
+  const [loading, setLoading]= useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const formData = {
       username: (
         e.currentTarget.elements.namedItem("username") as HTMLInputElement
@@ -36,19 +40,28 @@ export default function Page() {
     } catch (err) {
       console.error("Error submitting form:", err);
       alert("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-sky-950 to-indigo-900 flex items-center justify-center p-4">
+    <main className="min-h-screen text-foreground flex items-center justify-center p-4">
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white bg-opacity-10 backdrop-blur-lg rounded-xl shadow-lg p-6 space-y-6 text-white"
+        className="w-full max-w-md bg-foreground text-background rounded-xl shadow-1xl p-6 space-y-6"
       >
         <div className="text-center space-y-1">
-          <h1 className="text-2xl font-semibold">Sign Up</h1>
-          <p className="text-sm text-gray-300">
+          <h1
+            className={clsx(
+              "text-2xl font-semibold",
+              robo.className
+            )}
+          >
+            Sign Up
+          </h1>
+          <p className="text-sm">
             Create your account to get started
           </p>
         </div>
@@ -62,7 +75,7 @@ export default function Page() {
             name="username"
             required
             placeholder="e.g. janedoe"
-            className="w-full px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 rounded-md text-white bg-slate-800 border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -96,9 +109,10 @@ export default function Page() {
 
         <button
           type="submit"
-          className="w-full py-2 rounded-md bg-blue-600 hover:bg-blue-700 font-semibold transition"
+          className="bg-btn-bg text-btn-text w-full py-2 rounded-md hover:bg-btn-text hover:text-btn-bg font-semibold transition"
+          disabled={loading}
         >
-          Create Account
+          { loading ? 'Signing in...' : 'Create Account'}
         </button>
 
         <p className="text-center text-sm text-gray-300">
